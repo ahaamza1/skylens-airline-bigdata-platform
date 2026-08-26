@@ -2,8 +2,10 @@ version: '3.8'
 
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.5.0
     container_name: zookeeper
+    networks:
+      - airline-net
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -11,8 +13,10 @@ services:
       - "2181:2181"
 
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.5.0
     container_name: kafka
+    networks:
+      - airline-net
     depends_on:
       - zookeeper
     ports:
@@ -24,8 +28,10 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   postgres:
-    image: postgres:latest
+    image: postgres:15-alpine
     container_name: postgres
+    networks:
+      - airline-net
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
@@ -33,17 +39,28 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
 
   superset:
-    image: apache/superset:latest
+    build:
+      context: ./superset
+      dockerfile: Dockerfile
     container_name: superset
+    networks:
+      - airline-net
     ports:
       - "8088:8088"
     environment:
       - SUPERSET_LOAD_EXAMPLES=yes
       - SUPERSET_SECRET_KEY=your_super_secret_key_here
+    volumes:
+      - superset_home:/app/superset_home
     restart: always
 
 volumes:
   postgres_data:
+  superset_home:
+
+networks:
+  airline-net:
+    driver: bridge
