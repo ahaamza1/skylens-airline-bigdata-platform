@@ -1,4 +1,4 @@
-# ✈️ Real-Time Flight Data Streaming & Analytics Pipeline
+#  Skylens Real-Time Flight Data Streaming & Analytics Pipeline
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
 ![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-Event%20Streaming-black)
